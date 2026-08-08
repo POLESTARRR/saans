@@ -78,10 +78,8 @@ whole day is run again without it and the difference is taken. Same for every
 recommendation, so nothing on the page is a rule of thumb.
 
 Every constant is in [`frontend/data/sources.json`](frontend/data/sources.json)
-with its source and a confidence rating, because the output is an arithmetic
-claim about somebody's lungs and an uncited number is an opinion with a decimal
-point on it. Frying and sweeping are marked low confidence, honestly, because
-they vary enormously between homes.
+with its source, because the output is an arithmetic claim about somebody's
+lungs and an uncited number is an opinion with a decimal point on it.
 
 ## Where the readings come from
 
