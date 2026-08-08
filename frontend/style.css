@@ -1,0 +1,266 @@
+/* Saans.
+
+   The whole page sits under a haze. Colour is driven by the air quality band,
+   so on a severe day the interface itself goes brown and heavy and on a clean
+   day it clears. That is not decoration: the number is abstract and the feeling
+   of the page is the fastest way to communicate it before anyone reads a word.
+
+   Everything is drawn over a drifting particle field on a canvas, with a soft
+   smog gradient above it, so the cards read as though seen through the air
+   being described. */
+
+:root {
+  --ink: #0a0b0d;
+  --ink-2: rgba(22, 24, 29, 0.72);
+  --ink-3: rgba(30, 33, 39, 0.6);
+  --line: rgba(255, 255, 255, 0.09);
+  --line-2: rgba(255, 255, 255, 0.16);
+  --text: #edeef1;
+  --muted: #9aa2ad;
+  --dim: #6b7480;
+
+  /* Replaced at runtime by the current AQI band. */
+  --aqi: #fb923c;
+  --aqi-soft: rgba(251, 146, 60, 0.18);
+
+  --good: #4ade80;
+  --bad: #ef4444;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ---------------- the haze ---------------- */
+
+#haze {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0; pointer-events: none;
+}
+
+/* A heavy band low on the screen, like smog sitting in a street. Its colour
+   comes from the AQI variable so the whole page darkens as the air worsens. */
+.smog-layer {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(120% 70% at 50% 108%, var(--aqi-soft), transparent 62%),
+    radial-gradient(90% 55% at 12% -10%, rgba(255,255,255,.045), transparent 60%);
+  transition: background 1.2s ease;
+}
+
+.wrap { max-width: 1060px; margin: 0 auto; padding: 0 22px; position: relative; z-index: 1; }
+
+/* ---------------- hero ---------------- */
+
+.hero { padding: 60px 0 40px; position: relative; z-index: 1; }
+
+.brand {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .34em;
+  color: var(--aqi); margin-bottom: 26px;
+  transition: color 1.2s ease;
+}
+.brand .ring {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--aqi);
+  box-shadow: 0 0 0 4px var(--aqi-soft), 0 0 18px var(--aqi);
+  animation: pulse 3.4s ease-in-out infinite;
+  transition: background 1.2s ease;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.25); opacity: .65; }
+}
+
+.hero h1 {
+  margin: 0 0 18px;
+  font-size: clamp(30px, 5.6vw, 54px);
+  line-height: 1.06; letter-spacing: -.035em; font-weight: 600;
+  max-width: 17ch;
+}
+#hero-verdict { color: var(--aqi); transition: color 1.2s ease; }
+
+.lede { margin: 0; color: var(--muted); max-width: 62ch; font-size: 16.5px; }
+
+/* ---------------- readout strip ---------------- */
+
+.readout {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 10px; margin-top: 30px;
+}
+.readout .r {
+  border: 1px solid var(--line-2); border-radius: 10px;
+  padding: 13px 15px; background: rgba(0,0,0,.34);
+  backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px);
+  min-width: 0;
+}
+.readout .r b {
+  display: block; font-family: var(--mono); font-size: 21px;
+  letter-spacing: -.03em; white-space: nowrap;
+}
+.readout .r span { font-size: 11.5px; color: var(--dim); display: block; margin-top: 3px; }
+
+/* ---------------- panels ---------------- */
+
+.panel {
+  border: 1px solid var(--line); border-radius: 14px;
+  background: var(--ink-2);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  padding: 30px; margin: 26px 0;
+}
+.panel.accent {
+  border-color: var(--line-2);
+  background: linear-gradient(165deg, var(--aqi-soft), transparent 55%), var(--ink-2);
+  transition: background 1.2s ease;
+}
+.panel.muted { background: rgba(18,20,24,.55); }
+.headline-panel { text-align: center; }
+
+.kicker {
+  font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--aqi); margin-bottom: 10px;
+  transition: color 1.2s ease;
+}
+.panel h2 {
+  margin: 0 0 14px; font-size: clamp(20px, 2.7vw, 27px);
+  letter-spacing: -.022em; font-weight: 600; line-height: 1.22;
+}
+.body { color: var(--muted); max-width: 74ch; margin: 0 0 22px; font-size: 15.5px; }
+.fineprint { color: var(--dim); font-size: 12.5px; max-width: 62ch; margin: 18px auto 0; }
+
+/* ---------------- cigarette hero ---------------- */
+
+.cig-big {
+  font-family: var(--mono);
+  font-size: clamp(52px, 12vw, 104px);
+  line-height: 1; letter-spacing: -.05em;
+  color: var(--aqi); transition: color 1.2s ease;
+}
+.cig-cap { color: var(--muted); font-size: 16px; margin-top: 10px; }
+.cig-sub { color: var(--dim); font-size: 13.5px; margin-top: 6px; font-family: var(--mono); }
+
+.cigs { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-top: 22px; max-width: 620px; margin-inline: auto; }
+.cigs i {
+  width: 7px; height: 26px; border-radius: 2px;
+  background: linear-gradient(to bottom, #f3f4f6 62%, #d97706 62%, #92400e 100%);
+  opacity: .92;
+}
+
+/* ---------------- attribution bars ---------------- */
+
+.attr { margin-top: 6px; }
+.attr-row {
+  display: grid; grid-template-columns: 200px 1fr 92px;
+  gap: 13px; align-items: center; padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+}
+.attr-row:last-child { border-bottom: 0; }
+.attr-label { font-size: 14px; display: flex; align-items: center; gap: 9px; min-width: 0; }
+.attr-label .ic { font-size: 17px; }
+.attr-track { background: rgba(0,0,0,.4); border-radius: 5px; height: 24px; overflow: hidden; }
+.attr-fill { height: 100%; border-radius: 5px; transition: width .6s cubic-bezier(.4,0,.2,1); }
+.attr-num { font-family: var(--mono); font-size: 13px; text-align: right; color: var(--muted); }
+
+.attr-note {
+  grid-column: 1 / -1; color: var(--dim); font-size: 12.5px;
+  padding: 2px 0 8px 30px; max-width: 78ch;
+}
+.conf { font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em;
+  text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+  border: 1px solid var(--line-2); color: var(--dim); margin-left: 8px; }
+.conf.low { border-color: #b45309; color: #f59e0b; }
+
+/* ---------------- actions ---------------- */
+
+.action {
+  display: grid; grid-template-columns: 1fr 128px;
+  gap: 16px; align-items: center;
+  border: 1px solid var(--line); border-radius: 11px;
+  padding: 16px 18px; margin-bottom: 11px; background: rgba(0,0,0,.26);
+}
+.action:first-child { border-color: var(--good); background: rgba(74,222,128,.07); }
+.action h4 { margin: 0 0 5px; font-size: 15.5px; font-weight: 600; }
+.action p { margin: 0; color: var(--muted); font-size: 13.5px; }
+.action .save { text-align: right; }
+.action .save b { display: block; font-family: var(--mono); font-size: 24px; color: var(--good); letter-spacing: -.03em; }
+.action .save span { font-size: 11px; color: var(--dim); }
+.cost-tag {
+  display: inline-block; font-family: var(--mono); font-size: 10.5px;
+  padding: 2px 7px; border-radius: 4px; margin-left: 8px;
+  border: 1px solid var(--line-2); color: var(--muted);
+}
+.cost-tag.free { border-color: var(--good); color: var(--good); }
+
+/* ---------------- charts ---------------- */
+
+svg.chart { width: 100%; height: auto; display: block; min-width: 540px; }
+.chart-scroll { width: 100%; overflow-x: auto; }
+.legend { display: flex; flex-wrap: wrap; gap: 17px; margin-top: 13px;
+  font-size: 12.5px; color: var(--muted); font-family: var(--mono); }
+.legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px;
+  margin-right: 7px; vertical-align: middle; }
+
+/* ---------------- controls ---------------- */
+
+.ctrl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 17px; }
+.ctrl label {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 12.5px; color: var(--muted); margin-bottom: 7px;
+}
+.ctrl output { font-family: var(--mono); color: var(--text); font-size: 13px; }
+.ctrl input[type=range] { width: 100%; accent-color: var(--aqi); }
+.ctrl select {
+  width: 100%; background: rgba(0,0,0,.45); color: var(--text);
+  border: 1px solid var(--line-2); border-radius: 7px; padding: 9px 11px;
+  font-family: inherit; font-size: 13.5px;
+}
+.toggles { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 20px; }
+.toggle {
+  border: 1px solid var(--line-2); border-radius: 999px;
+  padding: 8px 15px; font-size: 13px; cursor: pointer;
+  background: rgba(0,0,0,.3); color: var(--muted); user-select: none;
+  transition: all .18s ease;
+}
+.toggle.on { border-color: var(--aqi); color: var(--text); background: var(--aqi-soft); }
+
+/* ---------------- purifiers ---------------- */
+
+.chart-scroll table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 660px; }
+th, td { text-align: right; padding: 10px 11px; border-bottom: 1px solid var(--line); }
+th:first-child, td:first-child { text-align: left; }
+th { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--dim); font-weight: 500; white-space: nowrap; }
+td { font-family: var(--mono); }
+td.name { font-family: inherit; }
+tr.best td { background: rgba(74,222,128,.08); }
+tr.toosmall { opacity: .42; }
+.flag { font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 1px 6px; border-radius: 3px;
+  border: 1px solid #b45309; color: #f59e0b; margin-left: 7px; }
+
+.caveats p { color: var(--muted); font-size: 14.5px; max-width: 76ch; margin: 0 0 14px; }
+.caveats b { color: var(--text); }
+code { font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+
+footer { padding: 34px 0 70px; color: var(--dim); font-size: 13px; }
+
+@media (max-width: 860px) { .readout { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px) {
+  .panel { padding: 20px 16px; }
+  .attr-row { grid-template-columns: 128px 1fr 66px; gap: 9px; font-size: 12.5px; }
+  .attr-note { padding-left: 0; }
+  .action { grid-template-columns: 1fr; }
+  .action .save { text-align: left; }
+}

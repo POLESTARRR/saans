@@ -1,0 +1,80 @@
+{
+  "_note": "Seed values so the page works before the scheduled fetch has run. Replaced on the first successful job.",
+  "cities": {
+    "ahmedabad": {
+      "name": "Ahmedabad",
+      "pm25": 78.0,
+      "seed": true
+    },
+    "bengaluru": {
+      "name": "Bengaluru",
+      "pm25": 38.0,
+      "seed": true
+    },
+    "chandigarh": {
+      "name": "Chandigarh",
+      "pm25": 71.0,
+      "seed": true
+    },
+    "chennai": {
+      "name": "Chennai",
+      "pm25": 42.0,
+      "seed": true
+    },
+    "delhi": {
+      "name": "Delhi",
+      "pm25": 168.0,
+      "seed": true
+    },
+    "gurugram": {
+      "name": "Gurugram",
+      "pm25": 152.0,
+      "seed": true
+    },
+    "hyderabad": {
+      "name": "Hyderabad",
+      "pm25": 55.0,
+      "seed": true
+    },
+    "jaipur": {
+      "name": "Jaipur",
+      "pm25": 88.0,
+      "seed": true
+    },
+    "kanpur": {
+      "name": "Kanpur",
+      "pm25": 149.0,
+      "seed": true
+    },
+    "kolkata": {
+      "name": "Kolkata",
+      "pm25": 96.0,
+      "seed": true
+    },
+    "lucknow": {
+      "name": "Lucknow",
+      "pm25": 142.0,
+      "seed": true
+    },
+    "mumbai": {
+      "name": "Mumbai",
+      "pm25": 64.0,
+      "seed": true
+    },
+    "noida": {
+      "name": "Noida",
+      "pm25": 181.0,
+      "seed": true
+    },
+    "patna": {
+      "name": "Patna",
+      "pm25": 155.0,
+      "seed": true
+    },
+    "pune": {
+      "name": "Pune",
+      "pm25": 58.0,
+      "seed": true
+    }
+  }
+}

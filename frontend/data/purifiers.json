@@ -1,0 +1,38 @@
+{
+  "_about": "Air purifiers sold in India, with the number nobody puts on the box: what the thing actually costs to own. Prices are indicative retail as of 2026 and move constantly, which is why the interface shows the ranking rather than pretending the rupee figures are current to the day.",
+
+  "_the_point": "Every 'best air purifier' article ranks on sticker price and claimed room coverage. Both are the wrong number. Filters are consumable, they cost between a tenth and a third of the machine every single year, and in Indian air they clog faster than the rated life. Over five years the filters routinely cost more than the purifier did. Rank on five-year cost per unit of clean air delivered and the list reorders substantially.",
+
+  "_room_coverage_warning": "Manufacturer room coverage claims usually assume a low air change rate and a ceiling height that is not yours. This project ignores the claimed coverage entirely and sizes from CADR against your actual room volume.",
+
+  "target_air_changes_per_hour": {
+    "value": 4.5,
+    "_note": "Clean air changes per hour needed for meaningful PM2.5 reduction in a polluted city. Below about 3 the machine is decorative. Five or more is better and costs more to run."
+  },
+
+  "filter_life_derating": {
+    "value": 0.65,
+    "_note": "Indian outdoor loading shortens filter life well below the rated figure. Rated hours are measured in far cleaner air than Delhi in November, so this project derates them rather than quoting the box."
+  },
+
+  "electricity_inr_per_kwh": 8.0,
+
+  "purifiers": [
+    { "brand": "Mi",        "model": "Smart Air Purifier 4",       "cadr_m3_hr": 400, "price_inr": 12999, "filter_price_inr": 2199, "filter_life_hr": 4000, "watts": 33 },
+    { "brand": "Mi",        "model": "Air Purifier 4 Lite",        "cadr_m3_hr": 360, "price_inr": 9499,  "filter_price_inr": 1799, "filter_life_hr": 4000, "watts": 31 },
+    { "brand": "Philips",   "model": "AC1215",                     "cadr_m3_hr": 270, "price_inr": 11995, "filter_price_inr": 3299, "filter_life_hr": 3000, "watts": 30 },
+    { "brand": "Philips",   "model": "AC2887",                     "cadr_m3_hr": 344, "price_inr": 18995, "filter_price_inr": 3999, "filter_life_hr": 3000, "watts": 45 },
+    { "brand": "Honeywell", "model": "Air Touch V4",               "cadr_m3_hr": 300, "price_inr": 14999, "filter_price_inr": 3499, "filter_life_hr": 3000, "watts": 46 },
+    { "brand": "Honeywell", "model": "Air Touch i8",               "cadr_m3_hr": 250, "price_inr": 9999,  "filter_price_inr": 2799, "filter_life_hr": 3000, "watts": 40 },
+    { "brand": "Dyson",     "model": "Purifier Cool TP07",         "cadr_m3_hr": 290, "price_inr": 45900, "filter_price_inr": 7900, "filter_life_hr": 4380, "watts": 40 },
+    { "brand": "Coway",     "model": "Sleek Pro AP-1009",          "cadr_m3_hr": 303, "price_inr": 16900, "filter_price_inr": 4200, "filter_life_hr": 4000, "watts": 40 },
+    { "brand": "Sharp",     "model": "FP-J30M",                    "cadr_m3_hr": 240, "price_inr": 12500, "filter_price_inr": 3200, "filter_life_hr": 4000, "watts": 32 },
+    { "brand": "Levoit",    "model": "Core 400S",                  "cadr_m3_hr": 400, "price_inr": 21999, "filter_price_inr": 3499, "filter_life_hr": 4300, "watts": 38 },
+    { "brand": "Blueair",   "model": "Blue Pure 411",              "cadr_m3_hr": 170, "price_inr": 11999, "filter_price_inr": 2499, "filter_life_hr": 4400, "watts": 10 },
+    { "brand": "Eureka Forbes", "model": "Aeroguard SCPR 300",     "cadr_m3_hr": 300, "price_inr": 10999, "filter_price_inr": 2999, "filter_life_hr": 3500, "watts": 45 },
+    { "brand": "Atomberg", "model": "Air Purifier AP1",            "cadr_m3_hr": 320, "price_inr": 13999, "filter_price_inr": 2499, "filter_life_hr": 4000, "watts": 35 },
+    { "brand": "Realme",   "model": "TechLife Air Purifier",       "cadr_m3_hr": 330, "price_inr": 8999,  "filter_price_inr": 2299, "filter_life_hr": 3500, "watts": 38 },
+    { "brand": "Kent",     "model": "Aura Room Air Purifier",      "cadr_m3_hr": 180, "price_inr": 8500,  "filter_price_inr": 2600, "filter_life_hr": 3000, "watts": 45 },
+    { "brand": "Havells",  "model": "Freshia AP-40",               "cadr_m3_hr": 250, "price_inr": 14995, "filter_price_inr": 3500, "filter_life_hr": 3000, "watts": 55 }
+  ]
+}

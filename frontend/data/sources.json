@@ -1,0 +1,221 @@
+{
+  "_about": "PM2.5 emission sources found in Indian homes, with the numbers this project runs on. Every figure carries where it came from and how confident it is, because the whole product is an arithmetic claim about someone's health and an uncited number is just an opinion with a decimal point. Where the literature gives a range, the mid value is used and the range is kept so the interface can show it rather than hide it.",
+  "_units": "emission_mg is total PM2.5 mass released per event; duration_min is how long the release lasts; where a source is continuous, emission_mg is per hour.",
+  "sources": [
+    {
+      "id": "mosquito_coil",
+      "label": "Mosquito coil",
+      "icon": "🌀",
+      "room": "bedroom",
+      "emission_mg": 90,
+      "range_mg": [
+        50,
+        140
+      ],
+      "duration_min": 480,
+      "confidence": "high",
+      "note": "A single coil burned overnight in a closed bedroom, right beside a sleeping face. The most widely cited study on this found the particulate mass from one coil comparable to burning roughly 75 to 130 cigarettes. It is almost always the largest single source in an Indian home that has one, and almost nobody thinks of it as air pollution at all.",
+      "source": "Liu et al., Environmental Health Perspectives 111(12), 2003",
+      "fix": "A plug-in vaporiser is far lower emitting. A bed net emits nothing at all.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "cooking_fry",
+      "label": "Frying or tadka",
+      "icon": "🍳",
+      "room": "kitchen",
+      "emission_mg": 22,
+      "range_mg": [
+        8,
+        60
+      ],
+      "duration_min": 30,
+      "confidence": "medium",
+      "note": "Deep frying and tempering release the most of any routine cooking. What decides whether it matters to the rest of the house is the exhaust and whether the kitchen door is shut.",
+      "source": "Indoor cooking PM2.5 emission studies, typical Indian kitchen conditions",
+      "fix": "Run the exhaust or chimney for the whole cook and ten minutes after. Shut the kitchen door.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "cooking_normal",
+      "label": "Everyday cooking",
+      "icon": "🥘",
+      "room": "kitchen",
+      "emission_mg": 7,
+      "range_mg": [
+        3,
+        18
+      ],
+      "duration_min": 45,
+      "confidence": "medium",
+      "note": "Boiling, simmering, pressure cooking. Much lower than frying but it happens two or three times a day, so the total adds up.",
+      "source": "Indoor cooking PM2.5 emission studies",
+      "fix": "Exhaust on, kitchen door shut.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "roti",
+      "label": "Roti on an open flame",
+      "icon": "🫓",
+      "room": "kitchen",
+      "emission_mg": 9,
+      "range_mg": [
+        4,
+        20
+      ],
+      "duration_min": 20,
+      "confidence": "low",
+      "note": "Puffing rotis directly on the burner chars the surface, and charring is what produces fine particles. Less studied than frying, so this figure is the least certain in the list.",
+      "source": "Limited literature; estimated from charring emission studies",
+      "fix": "A tawa with a lid produces less than an open flame.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "incense",
+      "label": "Agarbatti or dhoop",
+      "icon": "🪔",
+      "room": "living",
+      "emission_mg": 14,
+      "range_mg": [
+        7,
+        45
+      ],
+      "duration_min": 45,
+      "confidence": "medium",
+      "note": "Smouldering combustion at close range, usually daily, often in a room with the windows shut. Dhoop cones emit more than thin sticks.",
+      "source": "Incense particulate emission studies",
+      "fix": "Light it near an open window, or use it in a room you are about to leave.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "dry_sweep",
+      "label": "Dry sweeping with a jhaadu",
+      "icon": "🧹",
+      "room": "living",
+      "emission_mg": 11,
+      "range_mg": [
+        4,
+        30
+      ],
+      "duration_min": 15,
+      "confidence": "low",
+      "note": "This one is different from the others: it creates almost no new particles, it lifts settled dust back into the air. The person sweeping is bent directly over the plume and breathing hard. It is the cheapest thing on this entire list to fix and the one nobody has been told about.",
+      "source": "Dust resuspension studies; magnitude depends heavily on how much dust has settled",
+      "fix": "Wet mop instead. Sweeping after a mop, rather than before, avoids most of it.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "smoking",
+      "label": "Smoking indoors",
+      "icon": "🚬",
+      "room": "living",
+      "emission_mg": 12,
+      "range_mg": [
+        8,
+        20
+      ],
+      "duration_min": 10,
+      "confidence": "high",
+      "note": "Per cigarette. Included because it is the reference point everyone already understands, and it is useful to see how other sources compare against it.",
+      "source": "Well established in the tobacco literature",
+      "fix": "Outdoors, away from windows.",
+      "fix_cost_inr": 0
+    },
+    {
+      "id": "candles",
+      "label": "Candles or diyas",
+      "icon": "🕯️",
+      "room": "living",
+      "emission_mg": 4,
+      "range_mg": [
+        1,
+        12
+      ],
+      "duration_min": 60,
+      "confidence": "low",
+      "note": "Small compared with coils and cooking. Worth including because they are common and people ask.",
+      "source": "Candle combustion emission studies",
+      "fix": "Ventilate the room afterwards.",
+      "fix_cost_inr": 0
+    }
+  ],
+  "breathing_rate_m3_per_hr": {
+    "_note": "Dose is concentration multiplied by how much air you actually move. This is why an outdoor run at the wrong hour outranks a whole day indoors: you breathe three to four times as hard while doing it.",
+    "sleeping": 0.32,
+    "resting": 0.42,
+    "light_activity": 0.62,
+    "cooking": 0.72,
+    "walking": 1.2,
+    "exercise": 2.4,
+    "_source": "US EPA Exposure Factors Handbook, adult averages"
+  },
+  "physics": {
+    "_note": "Building constants. These vary a great deal between homes, which is exactly why the questionnaire asks about the building rather than assuming.",
+    "air_exchange_per_hr": {
+      "sealed": 0.4,
+      "normal": 0.9,
+      "draughty": 1.8,
+      "window_open": 6.0,
+      "_source": "Air exchange rate measurements in urban Indian dwellings"
+    },
+    "deposition_per_hr": {
+      "pm25": 0.25,
+      "_note": "Rate at which fine particles settle out of the air on their own, independent of ventilation or filtration.",
+      "_source": "Indoor aerosol deposition literature"
+    },
+    "outdoor_penetration": {
+      "_note": "Fraction of outdoor particles that survive the journey through the building envelope. Not everything that leaks in stays airborne.",
+      "value": 0.8
+    },
+    "kitchen_door_shut_fraction": {
+      "_note": "Share of cooking emissions that stay in the kitchen when the door is closed rather than spreading through the home.",
+      "value": 0.75
+    },
+    "exhaust_capture_fraction": {
+      "_note": "Share of cooking emissions removed at source by a working chimney or exhaust fan.",
+      "value": 0.6
+    }
+  },
+  "aqi_bands": {
+    "_note": "Indian CPCB bands, not the US EPA scale. This matters: the same concentration is labelled differently under each, and CPCB is what Indian readers and government advisories use.",
+    "bands": [
+      {
+        "max": 30,
+        "label": "Good",
+        "color": "#4ade80"
+      },
+      {
+        "max": 60,
+        "label": "Satisfactory",
+        "color": "#a3e635"
+      },
+      {
+        "max": 90,
+        "label": "Moderate",
+        "color": "#fbbf24"
+      },
+      {
+        "max": 120,
+        "label": "Poor",
+        "color": "#fb923c"
+      },
+      {
+        "max": 250,
+        "label": "Very Poor",
+        "color": "#ef4444"
+      },
+      {
+        "max": 9999,
+        "label": "Severe",
+        "color": "#991b1b"
+      }
+    ],
+    "_units": "PM2.5 in micrograms per cubic metre, 24-hour average, per CPCB National AQI breakpoints"
+  },
+  "reference": {
+    "cigarette_equivalent_ug_inhaled": 264,
+    "_derivation": "Berkeley Earth's rule is that breathing 22 ug/m3 for a full 24 hours is about one cigarette. At an average adult breathing rate of roughly 0.5 m3/hr that is 22 x 0.5 x 24 = 264 micrograms of PM2.5 actually inhaled. This project works in inhaled mass rather than ambient concentration, so the conversion has to be done on that basis. An earlier version divided by 22 directly and produced figures around 100 cigarettes a day, which is obviously wrong and is exactly the kind of error a sanity check catches.",
+    "_caveat": "A rough device for making an abstract number feel real. Not a clinical equivalence, and the interface says so.",
+    "_source": "Berkeley Earth, PM2.5 to cigarette equivalence"
+  }
+}
