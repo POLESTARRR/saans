@@ -43,7 +43,7 @@ answers:
   bottoms out mid-afternoon.
 - A purifier in the living room does nothing for the eight hours you are behind
   a closed bedroom door.
-- **Dry sweeping does not remove dust, it relaunches it**, and the person
+- **Dry sweeping does not remove dust, it relaunches it.** The person
   sweeping is bent directly over the plume. This one costs nothing to fix and
   nobody has been told.
 

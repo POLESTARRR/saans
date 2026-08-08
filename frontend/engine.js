@@ -449,42 +449,105 @@ const Saans = (function () {
 
   /* ------------------------------------------------------------ purifiers */
 
-  // Sizing from CADR against actual room volume, then ranked on what the thing
-  // costs to own for five years rather than what it costs to buy.
-  function rankPurifiers(home, catalog, roomKey) {
+  // Ranking a purifier is not "which is most efficient", it is "which clears the
+  // bar for this room, most cheaply to own".
+  //
+  // Two wrong versions came before this one. The first gated on CADR and then
+  // sorted by five-year cost, so among everything that cleared the bar the order
+  // never moved and the same machine was recommended for a box room and a hall.
+  // The second ranked by cost per point of dose removed, which sounds better and
+  // is worse: efficiency per rupee rewards a small machine that is cheap and
+  // never actually gets the room clean, the way a small air conditioner is very
+  // efficient at not cooling a hall.
+  //
+  // What a buyer actually wants is sufficiency first, then price. So the target
+  // air changes for the room decide who is eligible, and cost of ownership
+  // decides who wins among them. When the room is too big for anything in the
+  // catalogue, that is reported rather than papered over with the least bad
+  // option, because two smaller units is usually the real answer and no
+  // single-machine ranking will ever say so.
+  function rankPurifiers(home, catalog, roomKey, series, data) {
     const V = volumes(home)[roomKey];
     const needed = V * catalog.target_air_changes_per_hour.value;
     const hoursPerYear = home.purifier_hours.length * 365;
     const derate = catalog.filter_life_derating.value;
 
-    return catalog.purifiers.map((p) => {
+    const noneHome = Object.assign({}, home, { purifier_cadr: 0 });
+    const baseDose = doseProfile(noneHome, simulate(noneHome, series, data), data).total_ug;
+
+    const rows = catalog.purifiers.map((p) => {
       const realFilterLife = p.filter_life_hr * derate;
       const filtersPerYear = hoursPerYear / realFilterLife;
       const filterCost5yr = filtersPerYear * 5 * p.filter_price_inr;
       const powerCost5yr = (p.watts / 1000) * hoursPerYear * 5 * catalog.electricity_inr_per_kwh;
       const total5yr = p.price_inr + filterCost5yr + powerCost5yr;
 
-      const achDelivered = p.cadr_m3_hr / V;
-      const adequate = p.cadr_m3_hr >= needed;
-      // Cost per unit of clean air actually delivered over five years, which is
-      // the comparison the sticker price hides.
-      const costPerCadr = total5yr / p.cadr_m3_hr;
+      const withIt = Object.assign({}, home, {
+        purifier_cadr: p.cadr_m3_hr, purifier_room: roomKey,
+      });
+      const dose = doseProfile(withIt, simulate(withIt, series, data), data).total_ug;
+      const cutPct = 100 * (baseDose - dose) / baseDose;
 
       return {
         ...p,
         needed_cadr: needed,
-        adequate,
-        ach_delivered: achDelivered,
+        adequate: p.cadr_m3_hr >= needed,
+        ach_delivered: p.cadr_m3_hr / V,
         filter_cost_5yr: filterCost5yr,
         power_cost_5yr: powerCost5yr,
         total_5yr: total5yr,
         filters_exceed_price: filterCost5yr > p.price_inr,
-        cost_per_cadr: costPerCadr,
+        dose_cut_pct: cutPct,
+        cost_per_point: cutPct > 0.05 ? total5yr / cutPct : Infinity,
       };
-    }).sort((a, b) => {
-      if (a.adequate !== b.adequate) return a.adequate ? -1 : 1;
-      return a.total_5yr - b.total_5yr;
     });
+
+    rows.sort((a, b) => {
+      // Anything that cannot clear the target is not a candidate, however cheap.
+      if (a.adequate !== b.adequate) return a.adequate ? -1 : 1;
+      if (a.adequate) return a.total_5yr - b.total_5yr;
+      // Among the inadequate, the one that gets closest is the least bad.
+      return b.cadr_m3_hr - a.cadr_m3_hr;
+    });
+
+    // If nothing in the catalogue is big enough, two of a smaller unit almost
+    // always beats one oversized one on both price and coverage, and it puts
+    // clean air in two places instead of one corner.
+    const anyAdequate = rows.some((r) => r.adequate);
+    let pair = null;
+    if (!anyAdequate) {
+      const best = rows
+        .map((p) => ({ p, n: Math.ceil(needed / p.cadr_m3_hr) }))
+        .filter((x) => x.n >= 2 && x.n <= 3)
+        .sort((a, b) => (a.n * a.p.total_5yr) - (b.n * b.p.total_5yr))[0];
+      if (best) {
+        pair = {
+          units: best.n,
+          model: best.p,
+          combined_cadr: best.p.cadr_m3_hr * best.n,
+          total_5yr: best.p.total_5yr * best.n,
+        };
+      }
+    }
+
+    // One winner is not a recommendation, it is a verdict, and when a single
+    // product genuinely dominates on cost the page looks broken rather than
+    // decisive. Buyers do not optimise one number anyway: what you can spend
+    // today and whether the thing is quiet enough to sleep beside are separate
+    // questions from what it costs over five years. So the picks are given on
+    // the axes people actually choose along, and when the same machine wins two
+    // of them that is said plainly instead of being padded out.
+    const eligible = rows.filter((r) => r.adequate);
+    rows.needed_cadr = needed;
+    rows.any_adequate = anyAdequate;
+    rows.pair = pair;
+    rows.picks = eligible.length ? {
+      value: eligible[0],
+      upfront: eligible.slice().sort((a, b) => a.price_inr - b.price_inr)[0],
+      quiet: eligible.slice().sort((a, b) =>
+        (a.noise_db - b.noise_db) || (a.total_5yr - b.total_5yr))[0],
+    } : null;
+    return rows;
   }
 
   function fmtHour(h) {

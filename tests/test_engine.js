@@ -191,7 +191,7 @@ function testIndoorConcentrationsArePlausible() {
 
 function testPurifierSizingAndCosts() {
   const h = S.defaultHome();
-  const ranked = S.rankPurifiers(h, CAT, "bedroom");
+  const ranked = S.rankPurifiers(h, CAT, "bedroom", 120, DATA);
   const V = S.volumes(h).bedroom;
   near("required CADR is volume times target air changes",
     ranked[0].needed_cadr, V * CAT.target_air_changes_per_hour.value, 0.01);
@@ -201,13 +201,56 @@ function testPurifierSizingAndCosts() {
     ok(`${p.model}: adequacy matches the CADR test`,
       p.adequate === (p.cadr_m3_hr >= p.needed_cadr));
   }
-  // Adequate machines must be ranked ahead of ones that cannot do the job,
-  // however cheap those are.
-  const firstInadequate = ranked.findIndex((p) => !p.adequate);
-  const lastAdequate = ranked.map((p) => p.adequate).lastIndexOf(true);
-  if (firstInadequate !== -1 && lastAdequate !== -1) {
-    ok("undersized machines are ranked below adequate ones", lastAdequate < firstInadequate);
+  // Sufficiency comes first: nothing that fails the air-change target may
+  // outrank something that meets it, however cheap it is. Then cost of
+  // ownership orders the eligible ones.
+  const firstBad = ranked.findIndex((p) => !p.adequate);
+  const lastGood = ranked.map((p) => p.adequate).lastIndexOf(true);
+  if (firstBad !== -1 && lastGood !== -1) {
+    ok("machines that cannot do the job rank below ones that can", lastGood < firstBad);
   }
+  const good = ranked.filter((p) => p.adequate);
+  for (let i = 1; i < good.length; i++) {
+    ok("eligible machines are ordered by five-year cost at " + i,
+      good[i].total_5yr >= good[i - 1].total_5yr - 1e-9);
+  }
+
+  // Three picks on the axes a buyer actually uses, and each must be eligible.
+  if (ranked.picks) {
+    for (const k of ["value", "upfront", "quiet"]) {
+      ok(`the ${k} pick clears the air-change target`, ranked.picks[k].adequate);
+    }
+    ok("the cheapest-upfront pick really is the cheapest to buy",
+      ranked.picks.upfront.price_inr <= ranked.picks.value.price_inr);
+    ok("the quiet pick really is the quietest",
+      ranked.picks.quiet.noise_db <= ranked.picks.value.noise_db);
+  }
+}
+
+function testRankingRespondsToTheRoom() {
+  // The bug this exists to prevent: the recommendation used to be identical for
+  // every room size because the sort key had nothing to do with the room.
+  const cuts = [8, 20, 34].map((m2) => {
+    const h = S.defaultHome(); h.bedroom_m2 = m2;
+    return S.rankPurifiers(h, CAT, "bedroom", 120, DATA)[0].dose_cut_pct;
+  });
+  ok("a bigger room means the same machine removes less", cuts[0] > cuts[2]);
+
+  // And a room too large for anything in the catalogue must say so rather than
+  // recommending the least bad single unit as though it were sufficient.
+  const huge = S.defaultHome(); huge.bedroom_m2 = 45; huge.ceiling_m = 3.6;
+  const r = S.rankPurifiers(huge, CAT, "bedroom", 120, DATA);
+  ok("an oversized room reports that nothing single is enough", !r.any_adequate);
+  ok("and offers a multi-unit answer instead", r.pair && r.pair.units >= 2);
+  ok("and the difference is visible, not a rounding artefact", cuts[0] - cuts[2] > 0.5);
+
+  // A machine has far more to remove when there is a source in that room, so
+  // its value must rise.
+  const plain = S.defaultHome();
+  const coil = S.defaultHome(); coil.habits.mosquito_coil = true;
+  ok("a source in the room makes a purifier worth more",
+    S.rankPurifiers(coil, CAT, "bedroom", 120, DATA)[0].dose_cut_pct >
+    S.rankPurifiers(plain, CAT, "bedroom", 120, DATA)[0].dose_cut_pct);
 }
 
 function testFiltersOftenExceedPurchasePrice() {
@@ -215,7 +258,7 @@ function testFiltersOftenExceedPurchasePrice() {
   // derating ever changes so that this stops being true, the copy is wrong and
   // this test should fail loudly rather than the page quietly lying.
   const h = S.defaultHome();
-  const ranked = S.rankPurifiers(h, CAT, "bedroom");
+  const ranked = S.rankPurifiers(h, CAT, "bedroom", 120, DATA);
   const share = ranked.filter((p) => p.filters_exceed_price).length / ranked.length;
   ok(`filters outrun the machine price for a real share of the catalogue (got ${(share * 100).toFixed(0)}%)`,
     share > 0.25);
@@ -231,6 +274,7 @@ const all = [
   testAttributionSumsToTotal, testEveryRecommendationActuallyHelps,
   testCoilIsTheBiggestSingleIndoorSource, testCigaretteFiguresArePlausible,
   testIndoorConcentrationsArePlausible, testPurifierSizingAndCosts,
+  testRankingRespondsToTheRoom,
   testFiltersOftenExceedPurchasePrice,
 ];
 

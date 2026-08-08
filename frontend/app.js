@@ -178,8 +178,8 @@ function render() {
   renderAttribution(attr, band);
   renderActions(recs);
   renderDayChart(sim, dose, band, series);
-  renderBestPurifier(recs, series);
-  renderPurifierTable();
+  renderBestPurifier(series);
+  renderPurifierTable(series);
   renderMiniResult(cig, indoorShare, recs);
   save();
 }
@@ -224,55 +224,94 @@ function renderActions(recs) {
     </div>`).join("");
 }
 
-function renderBestPurifier(recs, series) {
-  const ranked = Saans.rankPurifiers(HOME, CATALOG, HOME.purifier_room);
-  const best = ranked.find((p) => p.adequate) || ranked[0];
+function renderBestPurifier(series) {
+  const ranked = Saans.rankPurifiers(HOME, CATALOG, HOME.purifier_room, series, DATA);
   const V = Math.round(Saans.volumes(HOME)[HOME.purifier_room]);
+  const need = Math.round(ranked.needed_cadr);
 
-  // What this specific machine would do for this specific home, priced the same
-  // way as every other recommendation rather than asserted.
-  const alt = JSON.parse(JSON.stringify(HOME));
-  alt.purifier_cadr = best.cadr_m3_hr;
-  const before = Saans.doseProfile(HOME, Saans.simulate(HOME, series, DATA), DATA).total_ug;
-  const after = Saans.doseProfile(alt, Saans.simulate(alt, series, DATA), DATA).total_ug;
-  const cut = 100 * (before - after) / before;
+  // Nothing in the catalogue is big enough for the room.
+  if (!ranked.any_adequate) {
+    const p = ranked.pair;
+    $("#best-purifier").innerHTML = `
+      <div class="pick warn">
+        <div class="pick-label">One machine will not do this room</div>
+        <h3>Your ${esc(HOME.purifier_room)} is ${V} m³ and needs about ${need} CADR</h3>
+        <p class="pick-note" style="border:0;padding-top:12px;margin-top:6px">
+          The largest single unit here manages ${ranked[0].cadr_m3_hr}, which leaves the room
+          under-filtered however long you run it.
+          ${p ? `Two of the <b>${esc(p.model.brand)} ${esc(p.model.model)}</b> gives you
+            <b>${p.combined_cadr} CADR</b> for ${inr(p.total_5yr)} over five years, and puts
+            clean air at both ends of the room instead of one corner.`
+              : `Splitting the space or filtering the part you actually sleep in is the
+                 realistic answer.`}
+        </p>
+      </div>`;
+    return;
+  }
 
-  const cheapest = ranked.filter((p) => p.adequate).sort((a, b) => a.price_inr - b.price_inr)[0];
-  const stickerTrap = cheapest && cheapest.model !== best.model && cheapest.total_5yr > best.total_5yr;
+  const pk = ranked.picks;
+  const best = pk.value;
+
+  // A purifier in a room you are barely in cannot help, whatever it costs.
+  if (best.dose_cut_pct < 1) {
+    const rooms = ["bedroom", "living", "kitchen"]
+      .map((r) => ({ r, cut: Saans.rankPurifiers(HOME, CATALOG, r, series, DATA).picks?.value.dose_cut_pct || 0 }))
+      .sort((a, b) => b.cut - a.cut);
+    $("#best-purifier").innerHTML = `
+      <div class="pick warn">
+        <div class="pick-label">Do not buy one for this room</div>
+        <h3>A purifier in the ${esc(HOME.purifier_room)} would cut your dose by ${best.dose_cut_pct.toFixed(1)}%</h3>
+        <p class="pick-note" style="border:0;padding-top:12px;margin-top:6px">
+          You spend too little time in there for it to matter, and filtering a room
+          nobody is standing in is the most common way this money is wasted.
+          ${rooms[0].cut > 1 ? `Put it in the <b>${esc(rooms[0].r)}</b> instead, where the
+            same money is worth about <b>${rooms[0].cut.toFixed(0)}%</b> of your daily dose.`
+            : `On this profile a purifier is not the right purchase at all.`}
+        </p>
+      </div>`;
+    return;
+  }
+
+  const card = (tag, p, figure, sub, lead) => `
+    <div class="pick-card${lead ? " lead" : ""}">
+      <div class="pick-label">${tag}</div>
+      <h4>${esc(p.brand)} ${esc(p.model)}</h4>
+      <div class="pc-fig">${figure}</div>
+      <div class="pc-sub">${sub}</div>
+      <div class="pc-meta">${p.cadr_m3_hr} CADR · ${p.noise_db} dB · cuts ${p.dose_cut_pct.toFixed(0)}%</div>
+    </div>`;
+
+  const same = pk.upfront.model === best.model && pk.quiet.model === best.model;
 
   $("#best-purifier").innerHTML = `
-    <div class="pick">
-      <div class="pick-head">
-        <div>
-          <div class="pick-label">Best for your ${esc(HOME.purifier_room)}, ${V} m³</div>
-          <h3>${esc(best.brand)} ${esc(best.model)}</h3>
-        </div>
-        <div class="pick-cut"><b>−${cut.toFixed(0)}%</b><span>your daily dose</span></div>
-      </div>
-      <div class="pick-grid">
-        <div><b>${best.cadr_m3_hr}</b><span>CADR, you need ${Math.round(best.needed_cadr)}</span></div>
-        <div><b>${inr(best.price_inr)}</b><span>to buy</span></div>
-        <div><b>${inr(best.filter_cost_5yr)}</b><span>filters over 5 years</span></div>
-        <div><b>${inr(best.total_5yr)}</b><span>total to own for 5 years</span></div>
-      </div>
-      ${stickerTrap ? `<p class="pick-note">
-        The cheapest machine that would do the job is the ${esc(cheapest.brand)} ${esc(cheapest.model)}
-        at ${inr(cheapest.price_inr)}, ${inr(best.price_inr - cheapest.price_inr)} less on the shelf.
-        Over five years it costs ${inr(cheapest.total_5yr - best.total_5yr)} <em>more</em>, because its
-        filters are dearer. This is the trap the sticker price sets.</p>` : ""}
-    </div>`;
+    <p class="pick-intro">Your ${esc(HOME.purifier_room)} is <b>${V} m³</b>, so it needs about
+      <b>${need} CADR</b> to get real air changes. ${ranked.filter((r) => r.adequate).length}
+      of ${ranked.length} machines clear that. These are the picks on the three things
+      people actually decide on.</p>
+    <div class="pick-row">
+      ${card("Best to own", best, inr(best.total_5yr), "over five years, all in", true)}
+      ${card("Cheapest today", pk.upfront, inr(pk.upfront.price_inr), `to buy · ${inr(pk.upfront.total_5yr)} over five years`)}
+      ${card("Quietest", pk.quiet, pk.quiet.noise_db + " dB", `you sleep beside it · ${inr(pk.quiet.total_5yr)} over five years`)}
+    </div>
+    ${same ? `<p class="pick-note">The same machine wins all three, which happens when one
+      product is simply better value than the rest of the market rather than because the
+      comparison is broken.</p>`
+      : pk.upfront.total_5yr > best.total_5yr ? `<p class="pick-note">
+        The ${esc(pk.upfront.brand)} ${esc(pk.upfront.model)} is ${inr(best.price_inr - pk.upfront.price_inr)}
+        cheaper on the shelf and <em>${inr(pk.upfront.total_5yr - best.total_5yr)} more expensive</em>
+        over five years, because its filters cost more. That is the trap the sticker price sets.</p>` : ""}`;
 }
 
-function renderPurifierTable() {
-  const ranked = Saans.rankPurifiers(HOME, CATALOG, HOME.purifier_room);
+function renderPurifierTable(series) {
+  const ranked = Saans.rankPurifiers(HOME, CATALOG, HOME.purifier_room, series, DATA);
   $("#purifiers").innerHTML = `<div class="chart-scroll"><table>
-    <thead><tr><th>Model</th><th>CADR</th><th>Price</th><th>Filters 5yr</th><th>Total 5yr</th><th>Air changes</th></tr></thead>
+    <thead><tr><th>Model</th><th>CADR</th><th>Price</th><th>Filters 5yr</th><th>Total 5yr</th><th>Cuts your dose</th></tr></thead>
     <tbody>${ranked.map((p, i) => `
       <tr class="${i === 0 && p.adequate ? "best" : ""} ${p.adequate ? "" : "toosmall"}">
         <td class="name">${esc(p.brand)} ${esc(p.model)}${p.filters_exceed_price ? '<span class="flag">filters cost more</span>' : ""}</td>
         <td>${p.cadr_m3_hr}</td><td>${inr(p.price_inr)}</td>
         <td>${inr(p.filter_cost_5yr)}</td><td><b>${inr(p.total_5yr)}</b></td>
-        <td>${p.adequate ? p.ach_delivered.toFixed(1) + "×" : "too small"}</td>
+        <td>${p.dose_cut_pct > 0.05 ? "−" + p.dose_cut_pct.toFixed(1) + "%" : "-"}</td>
       </tr>`).join("")}</tbody></table></div>`;
 }
 
@@ -399,7 +438,7 @@ function buildControls() {
 
   on("c-city", (v) => { HOME.city = v; }, null, null, true);
   on("c-tight", (v) => { HOME.tightness = v; });
-  sliders.forEach(([k, , , , , f]) => on("c-" + k, (v) => { HOME[k] = +v; }, "o-" + k, f));
+  sliders.forEach(([k, , , f]) => on("c-" + k, (v) => { HOME[k] = +v; }, "o-" + k, f));
   on("c-cadr", (v) => { HOME.purifier_cadr = +v; }, "o-cadr", (v) => +v ? v : "none");
   on("c-prroom", (v) => { HOME.purifier_room = v; });
   on("c-ex", (v) => { HOME.routine.exercise_minutes = +v; }, "o-ex", (v) => v + " min");
