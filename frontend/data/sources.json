@@ -13,7 +13,6 @@
         140
       ],
       "duration_min": 480,
-      "confidence": "high",
       "note": "A single coil burned overnight in a closed bedroom, right beside a sleeping face. The most widely cited study on this found the particulate mass from one coil comparable to burning roughly 75 to 130 cigarettes. It is almost always the largest single source in an Indian home that has one, and almost nobody thinks of it as air pollution at all.",
       "source": "Liu et al., Environmental Health Perspectives 111(12), 2003",
       "fix": "A plug-in vaporiser is far lower emitting. A bed net emits nothing at all.",
@@ -30,7 +29,6 @@
         60
       ],
       "duration_min": 30,
-      "confidence": "medium",
       "note": "Deep frying and tempering release the most of any routine cooking. What decides whether it matters to the rest of the house is the exhaust and whether the kitchen door is shut.",
       "source": "Indoor cooking PM2.5 emission studies, typical Indian kitchen conditions",
       "fix": "Run the exhaust or chimney for the whole cook and ten minutes after. Shut the kitchen door.",
@@ -47,7 +45,6 @@
         18
       ],
       "duration_min": 45,
-      "confidence": "medium",
       "note": "Boiling, simmering, pressure cooking. Much lower than frying but it happens two or three times a day, so the total adds up.",
       "source": "Indoor cooking PM2.5 emission studies",
       "fix": "Exhaust on, kitchen door shut.",
@@ -64,7 +61,6 @@
         20
       ],
       "duration_min": 20,
-      "confidence": "low",
       "note": "Puffing rotis directly on the burner chars the surface, and charring is what produces fine particles. Less studied than frying, so this figure is the least certain in the list.",
       "source": "Limited literature; estimated from charring emission studies",
       "fix": "A tawa with a lid produces less than an open flame.",
@@ -81,7 +77,6 @@
         45
       ],
       "duration_min": 45,
-      "confidence": "medium",
       "note": "Smouldering combustion at close range, usually daily, often in a room with the windows shut. Dhoop cones emit more than thin sticks.",
       "source": "Incense particulate emission studies",
       "fix": "Light it near an open window, or use it in a room you are about to leave.",
@@ -98,27 +93,9 @@
         30
       ],
       "duration_min": 15,
-      "confidence": "low",
       "note": "This one is different from the others: it creates almost no new particles, it lifts settled dust back into the air. The person sweeping is bent directly over the plume and breathing hard. It is the cheapest thing on this entire list to fix and the one nobody has been told about.",
       "source": "Dust resuspension studies; magnitude depends heavily on how much dust has settled",
       "fix": "Wet mop instead. Sweeping after a mop, rather than before, avoids most of it.",
-      "fix_cost_inr": 0
-    },
-    {
-      "id": "smoking",
-      "label": "Smoking indoors",
-      "icon": "🚬",
-      "room": "living",
-      "emission_mg": 12,
-      "range_mg": [
-        8,
-        20
-      ],
-      "duration_min": 10,
-      "confidence": "high",
-      "note": "Per cigarette. Included because it is the reference point everyone already understands, and it is useful to see how other sources compare against it.",
-      "source": "Well established in the tobacco literature",
-      "fix": "Outdoors, away from windows.",
       "fix_cost_inr": 0
     },
     {
@@ -132,7 +109,6 @@
         12
       ],
       "duration_min": 60,
-      "confidence": "low",
       "note": "Small compared with coils and cooking. Worth including because they are common and people ask.",
       "source": "Candle combustion emission studies",
       "fix": "Ventilate the room afterwards.",

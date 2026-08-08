@@ -83,6 +83,23 @@ claim about somebody's lungs and an uncited number is an opinion with a decimal
 point on it. Frying and sweeping are marked low confidence, honestly, because
 they vary enormously between homes.
 
+## Where the readings come from
+
+Live, on every page load, from [Open-Meteo's air quality API](https://open-meteo.com/en/docs/air-quality-api).
+Free, no key, no registration, CORS open so the browser fetches it directly.
+It serves the CAMS global model interpolated to your coordinates, which is what
+makes covering all of NCR honest: Bahadurgarh gets a number computed for
+Bahadurgarh rather than Delhi's monitor speaking on its behalf.
+
+There is no cached file and no scheduled job, deliberately. Open this in six
+months and it pulls that day's readings. Nothing here can go stale.
+
+**Hourly, not daily.** An early version hard-coded a winter inversion curve with
+a dawn peak. That is right for Delhi in January and backwards in August, when
+the peak is in the evening, so it would have confidently told you to ventilate
+at exactly the wrong hour for half the year. Using the real hourly series means
+the ventilation and workout advice is correct for the actual day.
+
 ## Running it
 
 Nothing to install. No dependencies, no build step, no API keys.
@@ -110,25 +127,21 @@ frontend/engine.js            the model, runs in the browser
 frontend/app.js               interface, charts, the drifting haze
 frontend/data/sources.json    emission figures, every one cited
 frontend/data/purifiers.json  catalogue with five-year ownership cost
-frontend/data/air/            outdoor readings, refreshed by a scheduled job
-engine/fetch_air.py           that job
+frontend/data/cities.json     all of Delhi NCR plus 30 other cities, with coordinates
 tests/test_engine.js          15 groups
 ```
 
-No server anywhere. The model runs in the tab, the outdoor readings are static
-JSON refreshed by a GitHub Action, and **your home profile never leaves your
-device**. It sits in browser storage. There is no account and no database, which
+No server anywhere. The model runs in the tab, readings are fetched live, and
+**your home profile never leaves your device**. It sits in browser storage. There is no account and no database, which
 is the only honest way to ask someone when they cook and where they sleep.
 
 ## What it cannot know
 
 - **Emission figures are from literature, not your kitchen.** Real homes vary
-  enormously. Confidence ratings are on every source.
-- **Outdoor readings come from the nearest government monitor**, sometimes
-  kilometres away. Next to a construction site your real exposure is higher than
-  any station says. This is a metro product and does not pretend otherwise.
-- **The daily curve is a typical winter inversion shape**, not a live hourly
-  feed. Right about the pattern, approximate about any given hour.
+  enormously. Every source and its origin is listed in `data/sources.json`.
+- **A modelled field is not a monitor on your street.** It is good at the shape
+  of a city's day and approximate about your particular lane. Next to a
+  construction site your real exposure is higher than any citywide figure.
 - **PM2.5 only.** NO2 from gas burners, ozone and VOCs are real and not here.
 - **Not medical advice.** The cigarette comparison is a device for making
   micrograms feel like something, not a clinical equivalence.

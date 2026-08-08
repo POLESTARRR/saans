@@ -1,0 +1,77 @@
+{
+  "_about": "Coordinates for every covered location. Readings come from Open-Meteo's air quality API, which is free, needs no key, and serves CAMS global reanalysis interpolated to a point. That last part is what makes covering all of NCR honest: it is a modelled field rather than a nearest-station lookup, so Bahadurgarh gets a number computed for Bahadurgarh instead of Delhi's monitor pretending to speak for it.",
+  "_source": "https://open-meteo.com/en/docs/air-quality-api",
+  "_ncr_note": "The National Capital Region is one airshed and treating Delhi as its own weather is the standard mistake. Stubble smoke arrives from the northwest, Ghaziabad and Faridabad sit downwind of different industry, and a Gurugram high-rise and a Bahadurgarh ground floor are not the same exposure. All of it is here.",
+
+  "groups": [
+    {
+      "name": "Delhi NCR",
+      "cities": [
+        { "id": "new-delhi",     "name": "New Delhi",      "lat": 28.6139, "lon": 77.2090 },
+        { "id": "central-delhi", "name": "Central Delhi",  "lat": 28.6508, "lon": 77.2311 },
+        { "id": "north-delhi",   "name": "North Delhi",    "lat": 28.7041, "lon": 77.1025 },
+        { "id": "south-delhi",   "name": "South Delhi",    "lat": 28.5245, "lon": 77.2066 },
+        { "id": "east-delhi",    "name": "East Delhi",     "lat": 28.6280, "lon": 77.2951 },
+        { "id": "west-delhi",    "name": "West Delhi",     "lat": 28.6663, "lon": 77.0666 },
+        { "id": "dwarka",        "name": "Dwarka",         "lat": 28.5921, "lon": 77.0460 },
+        { "id": "rohini",        "name": "Rohini",         "lat": 28.7495, "lon": 77.0565 },
+        { "id": "gurugram",      "name": "Gurugram",       "lat": 28.4595, "lon": 77.0266 },
+        { "id": "faridabad",     "name": "Faridabad",      "lat": 28.4089, "lon": 77.3178 },
+        { "id": "noida",         "name": "Noida",          "lat": 28.5355, "lon": 77.3910 },
+        { "id": "greater-noida", "name": "Greater Noida",  "lat": 28.4744, "lon": 77.5040 },
+        { "id": "ghaziabad",     "name": "Ghaziabad",      "lat": 28.6692, "lon": 77.4538 },
+        { "id": "sonipat",       "name": "Sonipat",        "lat": 28.9931, "lon": 77.0151 },
+        { "id": "bahadurgarh",   "name": "Bahadurgarh",    "lat": 28.6928, "lon": 76.9198 },
+        { "id": "jhajjar",       "name": "Jhajjar",        "lat": 28.6063, "lon": 76.6565 },
+        { "id": "rohtak",        "name": "Rohtak",         "lat": 28.8955, "lon": 76.6066 },
+        { "id": "rewari",        "name": "Rewari",         "lat": 28.1990, "lon": 76.6183 },
+        { "id": "palwal",        "name": "Palwal",         "lat": 28.1447, "lon": 77.3260 },
+        { "id": "panipat",       "name": "Panipat",        "lat": 29.3909, "lon": 76.9635 },
+        { "id": "karnal",        "name": "Karnal",         "lat": 29.6857, "lon": 76.9905 },
+        { "id": "meerut",        "name": "Meerut",         "lat": 28.9845, "lon": 77.7064 },
+        { "id": "baghpat",       "name": "Baghpat",        "lat": 28.9448, "lon": 77.2195 },
+        { "id": "hapur",         "name": "Hapur",          "lat": 28.7306, "lon": 77.7759 },
+        { "id": "bulandshahr",   "name": "Bulandshahr",    "lat": 28.4038, "lon": 77.8582 },
+        { "id": "muzaffarnagar", "name": "Muzaffarnagar",  "lat": 29.4727, "lon": 77.7085 },
+        { "id": "shamli",        "name": "Shamli",         "lat": 29.4498, "lon": 77.3152 },
+        { "id": "bhiwadi",       "name": "Bhiwadi",        "lat": 28.2100, "lon": 76.8600 },
+        { "id": "alwar",         "name": "Alwar",          "lat": 27.5530, "lon": 76.6346 }
+      ]
+    },
+    {
+      "name": "Other major cities",
+      "cities": [
+        { "id": "mumbai",     "name": "Mumbai",     "lat": 19.0760, "lon": 72.8777 },
+        { "id": "bengaluru",  "name": "Bengaluru",  "lat": 12.9716, "lon": 77.5946 },
+        { "id": "chennai",    "name": "Chennai",    "lat": 13.0827, "lon": 80.2707 },
+        { "id": "kolkata",    "name": "Kolkata",    "lat": 22.5726, "lon": 88.3639 },
+        { "id": "hyderabad",  "name": "Hyderabad",  "lat": 17.3850, "lon": 78.4867 },
+        { "id": "pune",       "name": "Pune",       "lat": 18.5204, "lon": 73.8567 },
+        { "id": "ahmedabad",  "name": "Ahmedabad",  "lat": 23.0225, "lon": 72.5714 },
+        { "id": "jaipur",     "name": "Jaipur",     "lat": 26.9124, "lon": 75.7873 },
+        { "id": "lucknow",    "name": "Lucknow",    "lat": 26.8467, "lon": 80.9462 },
+        { "id": "kanpur",     "name": "Kanpur",     "lat": 26.4499, "lon": 80.3319 },
+        { "id": "patna",      "name": "Patna",      "lat": 25.5941, "lon": 85.1376 },
+        { "id": "varanasi",   "name": "Varanasi",   "lat": 25.3176, "lon": 82.9739 },
+        { "id": "agra",       "name": "Agra",       "lat": 27.1767, "lon": 78.0081 },
+        { "id": "chandigarh", "name": "Chandigarh", "lat": 30.7333, "lon": 76.7794 },
+        { "id": "ludhiana",   "name": "Ludhiana",   "lat": 30.9010, "lon": 75.8573 },
+        { "id": "amritsar",   "name": "Amritsar",   "lat": 31.6340, "lon": 74.8723 },
+        { "id": "indore",     "name": "Indore",     "lat": 22.7196, "lon": 75.8577 },
+        { "id": "bhopal",     "name": "Bhopal",     "lat": 23.2599, "lon": 77.4126 },
+        { "id": "nagpur",     "name": "Nagpur",     "lat": 21.1458, "lon": 79.0882 },
+        { "id": "surat",      "name": "Surat",      "lat": 21.1702, "lon": 72.8311 },
+        { "id": "dehradun",   "name": "Dehradun",   "lat": 30.3165, "lon": 78.0322 },
+        { "id": "guwahati",   "name": "Guwahati",   "lat": 26.1445, "lon": 91.7362 },
+        { "id": "bhubaneswar","name": "Bhubaneswar","lat": 20.2961, "lon": 85.8245 },
+        { "id": "ranchi",     "name": "Ranchi",     "lat": 23.3441, "lon": 85.3096 },
+        { "id": "raipur",     "name": "Raipur",     "lat": 21.2514, "lon": 81.6296 },
+        { "id": "kochi",      "name": "Kochi",      "lat": 9.9312,  "lon": 76.2673 },
+        { "id": "coimbatore", "name": "Coimbatore", "lat": 11.0168, "lon": 76.9558 },
+        { "id": "visakhapatnam","name":"Visakhapatnam","lat":17.6868,"lon": 83.2185 },
+        { "id": "jodhpur",    "name": "Jodhpur",    "lat": 26.2389, "lon": 73.0243 },
+        { "id": "srinagar",   "name": "Srinagar",   "lat": 34.0837, "lon": 74.7973 }
+      ]
+    }
+  ]
+}

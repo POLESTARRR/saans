@@ -4,69 +4,78 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Saans — what you are actually breathing</title>
+<meta name="description" content="Live PM2.5 for Delhi NCR and beyond, modelled through your own home. What you actually breathe, where it comes from, and the one change that fixes the most.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <canvas id="haze"></canvas>
-<div class="smog-layer"></div>
+<div class="smog"></div>
+<div class="vignette"></div>
 
 <header class="hero">
   <div class="wrap">
-    <div class="brand"><span class="ring"></span>SAANS</div>
-    <h1>The air in your house is<br><span id="hero-verdict">worse than the air outside</span></h1>
+    <div class="topline">
+      <div class="brand"><span class="ring"></span>SAANS</div>
+      <div class="place-chip"><span id="place">…</span></div>
+    </div>
+
+    <h1>The air in your house is<br><em id="hero-verdict">being measured wrong</em></h1>
+
     <p class="lede">
-      Every app shows you the city's air quality. None of them know that you burn
-      a coil beside your bed, fry at eight, sweep with a jhaadu, and open the
-      windows at exactly the wrong hour. This works out what you are actually
-      breathing, and which single change would fix the most of it.
+      Every app shows one number for a whole city. None of them know that you
+      burn a coil beside your bed, fry at eight, sweep with a jhaadu, and open
+      the windows at the worst hour of the day. This takes today's real readings
+      and runs them through your home.
     </p>
 
     <div class="readout" id="readout"></div>
+    <div class="freshness" id="freshness"></div>
+    <div class="status" id="status"></div>
   </div>
 </header>
 
 <main class="wrap">
 
-  <section class="panel headline-panel">
-    <div class="kicker">Your day</div>
+  <section class="panel hero-panel">
+    <div class="kicker">Today, for you</div>
     <div id="cig-hero"></div>
     <p class="fineprint">
-      The cigarette comparison is a rough device for making a microgram figure
-      feel like something, not a medical equivalence. It is the mass of fine
-      particles you inhale, converted at Berkeley Earth's rule of thumb.
+      A device for turning micrograms into something you can picture, using
+      Berkeley Earth's conversion. Not a clinical equivalence.
     </p>
   </section>
 
   <section class="panel">
     <div class="kicker">Where it comes from</div>
-    <h2>Most of it is probably not the city</h2>
+    <h2>The city number is only part of it</h2>
     <p class="body">
-      Each bar is what that source adds to your day, worked out by running the
-      whole day again without it and taking the difference. Outdoor air is split
-      in two on purpose: the hours you are out in it and what leaks into your
-      home are different problems with different fixes.
+      Each bar is what that source adds to your day, found by running the whole
+      day again without it and taking the difference. Outdoor air is split in
+      two on purpose: the hours you are out in it and what leaks in while you
+      are home are different problems with different answers.
     </p>
     <div id="attribution"></div>
   </section>
 
-  <section class="panel accent">
+  <section class="panel lift">
     <div class="kicker">What to change</div>
-    <h2>Ranked by how much it actually saves</h2>
+    <h2>Ranked by what it actually saves you</h2>
     <p class="body">
-      Every one of these was priced by re-running your whole day with that single
-      change applied. Nothing here is a rule of thumb, and the free ones are
-      listed with everything else rather than buried.
+      Every line was priced by re-running your entire day with that single change
+      applied. None of it is a rule of thumb, and the ones that cost nothing are
+      ranked alongside the ones that cost money rather than buried beneath them.
     </p>
     <div id="actions"></div>
   </section>
 
   <section class="panel">
     <div class="kicker">Through the day</div>
-    <h2>Indoors is not a safe place by default</h2>
+    <h2>Indoors is not automatically safer</h2>
     <p class="body">
-      Outdoor concentration against what is actually in the room you are in.
-      Watch what a cooking spike does, and what opening a window at dawn does.
+      Today's real hourly readings against what is actually in the room you are
+      in. Watch what cooking does, and what opening a window at the wrong hour
+      does.
     </p>
     <div id="daychart"></div>
     <div class="legend" id="daylegend"></div>
@@ -74,47 +83,58 @@
 
   <section class="panel" id="home-panel">
     <div class="kicker">Your home</div>
-    <h2>Six questions, then it is yours</h2>
+    <h2>Tell it about your place</h2>
     <p class="body">
-      This never leaves your device. There is no account, no server and no
-      database. It sits in your browser's own storage, which is the only honest
-      way to ask someone when they cook and where they sleep.
+      Everything updates as you go, and the summary at the bottom of this panel
+      moves with it. Nothing is sent anywhere. There is no account and no
+      database. It lives in this browser only.
     </p>
     <div id="controls"></div>
   </section>
 
-  <section class="panel">
+  <section class="panel lift">
     <div class="kicker">If you are buying one</div>
-    <h2>The filters usually cost more than the machine</h2>
+    <h2>The right purifier for your room</h2>
     <p class="body">
       Sized from your actual room volume rather than the coverage claim on the
-      box, then ranked on what it costs to own for five years. Replacement
-      filters run ₹1,500 to ₹4,000 and clog faster in Indian air than the rated
-      life suggests, which is why the cheap machine is often the expensive one.
+      box, then judged on what it costs to own for five years. Filters run
+      ₹1,500 to ₹4,000 and clog faster in this air than the rated life suggests,
+      which is how a cheap machine turns into an expensive one.
     </p>
-    <div id="purifiers"></div>
+    <div id="best-purifier"></div>
+    <details class="more">
+      <summary>See the full ranking</summary>
+      <div id="purifiers"></div>
+    </details>
   </section>
 
-  <section class="panel muted">
-    <div class="kicker">Being honest about this</div>
-    <h2>What this model cannot know</h2>
+  <section class="panel quiet">
+    <div class="kicker">Being straight with you</div>
+    <h2>What this cannot know</h2>
     <div class="caveats">
-      <p><b>The emission figures are from literature, not from your kitchen.</b>
-      Every one is listed in <code>data/sources.json</code> with its source and a
-      confidence rating. Frying and sweeping vary enormously between homes, and
-      those two are marked low confidence for that reason.</p>
-      <p><b>Outdoor readings come from the nearest government monitor</b>, which
-      may be several kilometres away. Near a construction site or an arterial
-      road your real exposure is higher than any station says.</p>
-      <p><b>The daily shape is a typical winter inversion curve</b>, not a live
-      hourly feed. It is right about the pattern, dawn peak and afternoon
-      trough, and approximate about any particular hour.</p>
-      <p><b>PM2.5 only.</b> NO2 from gas burners, ozone and VOCs are real and not
-      modelled here.</p>
+      <p><b>Readings are live and real.</b> Hourly PM2.5 comes from Open-Meteo's
+      air quality service, which serves the CAMS global model interpolated to
+      your coordinates. It refreshes every time you open this page, so it is
+      current whether you came back tomorrow or next winter.</p>
+      <p><b>A modelled field is not a monitor on your street.</b> It is good at
+      the shape of a city's day and approximate about your particular lane. Next
+      to a construction site or an arterial road your real exposure is higher
+      than any citywide figure.</p>
+      <p><b>Emission figures come from published studies, not your kitchen.</b>
+      Real homes vary enormously. Each source and its origin is listed in
+      <code>data/sources.json</code>.</p>
+      <p><b>PM2.5 only.</b> NO2 from gas burners, ozone and VOCs are real and are
+      not modelled here.</p>
+      <p><b>Not medical advice.</b></p>
     </div>
   </section>
 
 </main>
+
+<footer class="wrap">
+  <p>Readings from <a href="https://open-meteo.com/en/docs/air-quality-api">Open-Meteo</a>.
+  Bands are CPCB, not US EPA. Runs entirely in your browser.</p>
+</footer>
 
 <script src="engine.js"></script>
 <script src="app.js"></script>

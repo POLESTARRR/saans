@@ -66,7 +66,6 @@ const Saans = (function () {
         cook_per_day: 2,
         roti_per_day: 1,
         dry_sweep_per_day: 1,
-        smoking_per_day: 0,
         candles_per_day: 0,
       },
       routine: {
@@ -90,18 +89,32 @@ const Saans = (function () {
 
   /* ------------------------------------------------- outdoor, hour by hour */
 
-  // Winter inversion is the whole reason the ventilation advice in this app is
-  // counterintuitive. Pollution builds overnight under a temperature inversion,
-  // peaks around dawn, and lifts through the afternoon. Opening windows first
-  // thing is the worst available choice, and it is what almost everyone does.
-  const DIURNAL = [
+  // The outdoor curve is measured, not assumed. An earlier version hard-coded a
+  // winter inversion shape, dawn peak and afternoon trough, which is right for
+  // Delhi in January and exactly wrong in August, when the peak is in the
+  // evening. Baking a season into the model would have produced confident
+  // ventilation advice that was backwards for half the year. Real hourly values
+  // come in from the air quality feed and this is only the fallback for when
+  // they have not loaded yet.
+  const FALLBACK_SHAPE = [
     1.18, 1.24, 1.30, 1.35, 1.38, 1.40, 1.36, 1.28,
     1.14, 0.98, 0.85, 0.76, 0.70, 0.68, 0.70, 0.75,
     0.84, 0.95, 1.05, 1.12, 1.16, 1.18, 1.19, 1.18,
   ];
 
-  function outdoorProfile(dailyMeanPm25) {
-    return DIURNAL.map((f) => dailyMeanPm25 * f);
+  // Accepts either a measured 24-value array or a single daily mean.
+  function outdoorProfile(hourlyOrMean) {
+    if (Array.isArray(hourlyOrMean) && hourlyOrMean.length === HOURS) {
+      return hourlyOrMean.slice();
+    }
+    return FALLBACK_SHAPE.map((f) => hourlyOrMean * f);
+  }
+
+  function meanOf(hourlyOrMean) {
+    if (Array.isArray(hourlyOrMean)) {
+      return hourlyOrMean.reduce((a, b) => a + b, 0) / hourlyOrMean.length;
+    }
+    return hourlyOrMean;
   }
 
   /* --------------------------------------------------------- source events */
@@ -139,7 +152,6 @@ const Saans = (function () {
       if (i < h.roti_per_day) add("roti", hr, 1);
     });
     for (let i = 0; i < h.dry_sweep_per_day; i++) add("dry_sweep", 9 + i * 8, 1);
-    for (let i = 0; i < h.smoking_per_day; i++) add("smoking", 11 + i * 3, 1);
     for (let i = 0; i < h.candles_per_day; i++) add("candles", 19, 1);
 
     return { sched, attribution };
@@ -172,7 +184,8 @@ const Saans = (function () {
     const openLambda = phys.air_exchange_per_hr.window_open;
 
     const conc = { bedroom: [], living: [], kitchen: [] };
-    let c = { bedroom: dailyMeanPm25 * 0.6, living: dailyMeanPm25 * 0.6, kitchen: dailyMeanPm25 * 0.6 };
+    const seed = meanOf(dailyMeanPm25) * 0.6;
+    let c = { bedroom: seed, living: seed, kitchen: seed };
 
     // Two passes so the day starts from a settled state rather than an
     // arbitrary guess. Without this the first few hours are an artefact of the
@@ -274,7 +287,6 @@ const Saans = (function () {
       cook_per_day: "cooking_normal",
       roti_per_day: "roti",
       dry_sweep_per_day: "dry_sweep",
-      smoking_per_day: "smoking",
       candles_per_day: "candles",
     };
 
@@ -341,7 +353,7 @@ const Saans = (function () {
       mutate(alt);
       const after = doseProfile(alt, simulate(alt, dailyMeanPm25, data), data).total_ug;
       const saved = base - after;
-      if (saved > base * 0.005) {
+      if (saved > base * 0.0015) {
         out.push({ label, detail, cost_inr: cost, saved_ug: saved, saved_pct: 100 * saved / base });
       }
     }
@@ -389,6 +401,17 @@ const Saans = (function () {
       tryChange("Light incense near an open window",
         "Or in a room you are about to leave. Smouldering combustion at close range adds up daily.",
         0, (a) => { a.habits.incense_per_day = 0; });
+    }
+
+    // Buying the right purifier is one of the available changes, so it is
+    // priced the same way as everything else and ranked in the same list rather
+    // than sitting in a table the reader has to join up themselves.
+    if (home.purifier_cadr < 200) {
+      const V = volumes(home)[home.purifier_room];
+      const target = Math.ceil((V * 4.5) / 10) * 10;
+      tryChange(`Run a ${target} CADR purifier in the ${home.purifier_room}`,
+        `Sized to your actual room volume of ${Math.round(V)} m³ rather than the coverage claim on the box. Overnight while you sleep is where it earns its keep.`,
+        12000, (a) => { a.purifier_cadr = target; });
     }
 
     out.sort((a, b) => (b.saved_ug - a.saved_ug));
@@ -474,7 +497,7 @@ const Saans = (function () {
   return {
     defaultHome, volumes, simulate, doseProfile, attributeDose,
     recommendations, rankPurifiers, outdoorProfile, bandFor, cigarettes,
-    fmtHour, bestVentilationHours, bestExerciseHour, DIURNAL, HOURS,
+    fmtHour, bestVentilationHours, bestExerciseHour, FALLBACK_SHAPE, HOURS, meanOf,
   };
 })();
 
