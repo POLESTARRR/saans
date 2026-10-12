@@ -14,3 +14,6 @@ The project name 'Saans' (Sanskrit/Hindi for 'breath') suggests a breathing exer
 
 ## 2026-10-13
 No external API integrations are apparent from the file structure, consistent with the offline-first pattern of sibling APM apps.
+
+## 2026-10-13
+No Python or JavaScript main files were immediately identified in the file search, suggesting a different tech stack or minimal file count.
