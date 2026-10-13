@@ -11,3 +11,6 @@ The app may implement pranayama timing, breath hold tracking, or respiratory rat
 
 ## 2026-10-13
 The project name 'Saans' (Sanskrit/Hindi for 'breath') suggests a breathing exercise, meditation, or respiratory health application.
+
+## 2026-10-13
+No external API integrations are apparent from the file structure, consistent with the offline-first pattern of sibling APM apps.
