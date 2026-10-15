@@ -26,3 +26,6 @@ The project is grouped with client-side health apps, implying likely focus on pr
 
 ## 2026-10-14
 The app may implement box breathing, 4-7-8 technique, or Wim Hof method based on the Sanskrit naming.
+
+## 2026-10-15
+The directory sits under `/APM/` alongside other health/wellness apps (scalp log, prahar, umbra), indicating a personal health toolkit theme.
