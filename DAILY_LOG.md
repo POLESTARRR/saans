@@ -29,3 +29,6 @@ The app may implement box breathing, 4-7-8 technique, or Wim Hof method based on
 
 ## 2026-10-15
 The directory sits under `/APM/` alongside other health/wellness apps (scalp log, prahar, umbra), indicating a personal health toolkit theme.
+
+## 2026-10-15
+The project may use similar vanilla JS + HTML architecture as scalp-log given the APM suite's pattern.
