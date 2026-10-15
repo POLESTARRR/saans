@@ -32,3 +32,6 @@ The directory sits under `/APM/` alongside other health/wellness apps (scalp log
 
 ## 2026-10-15
 The project may use similar vanilla JS + HTML architecture as scalp-log given the APM suite's pattern.
+
+## 2026-10-16
+The app likely uses timers, audio cues, or visual breathing guides based on common breathing app UX patterns.
