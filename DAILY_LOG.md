@@ -35,3 +35,6 @@ The project may use similar vanilla JS + HTML architecture as scalp-log given th
 
 ## 2026-10-16
 The app likely uses timers, audio cues, or visual breathing guides based on common breathing app UX patterns.
+
+## 2026-10-17
+Given the naming pattern in the APM suite (umbra for UV, prahar for FODMAP, scalp log for dermatitis), Saans likely addresses a specific breathing or respiratory need.
