@@ -41,3 +41,6 @@ Given the naming pattern in the APM suite (umbra for UV, prahar for FODMAP, scal
 
 ## 2026-10-17
 No framework dependencies visible, suggesting vanilla JavaScript similar to scalp-log's approach.
+
+## 2026-10-18
+Given the health-tracking theme of APM apps, Saans may log breathing sessions over time with trend visualization.
