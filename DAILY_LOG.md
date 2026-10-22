@@ -47,3 +47,6 @@ Given the health-tracking theme of APM apps, Saans may log breathing sessions ov
 
 ## 2026-10-22
 The project is grouped with client-side health apps, implying likely focus on privacy-first, local-only data handling.
+
+## 2026-10-22
+The app may implement box breathing, 4-7-8 technique, or Wim Hof method based on the Sanskrit naming.
