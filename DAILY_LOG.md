@@ -44,3 +44,6 @@ No framework dependencies visible, suggesting vanilla JavaScript similar to scal
 
 ## 2026-10-18
 Given the health-tracking theme of APM apps, Saans may log breathing sessions over time with trend visualization.
+
+## 2026-10-22
+The project is grouped with client-side health apps, implying likely focus on privacy-first, local-only data handling.
